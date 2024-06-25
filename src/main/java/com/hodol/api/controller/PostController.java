@@ -6,6 +6,7 @@ import com.hodol.api.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public class PostController {
     }
 
     @GetMapping("/posts")
-    public List<PostResponse> getAll() {
-        return postService.getList();
+    public List<PostResponse> getAll(Pageable pageable) {
+        return postService.getList(pageable);
     }
 }
