@@ -1,10 +1,13 @@
 package com.hodol.api.service;
 
 import com.hodol.api.domain.Post;
+import com.hodol.api.domain.PostEditor;
 import com.hodol.api.repository.PostRepository;
 import com.hodol.api.request.PostCreate;
+import com.hodol.api.request.PostEdit;
 import com.hodol.api.request.PostSearch;
 import com.hodol.api.response.PostResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -43,5 +46,21 @@ public class PostService {
         return postRepository.getList(postSearch).stream()
                 .map(PostResponse::new)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public PostResponse edit(Long id, PostEdit postEdit) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다"));
+
+        PostEditor.PostEditorBuilder editorBuilder = post.toEditor();
+
+        PostEditor postEditor = editorBuilder.title(postEdit.getTitle())
+                .content(postEdit.getContent())
+                .build();
+
+        post.edit(postEditor);
+
+        return new PostResponse(post);
     }
 }

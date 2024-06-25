@@ -1,6 +1,7 @@
 package com.hodol.api.controller;
 
 import com.hodol.api.request.PostCreate;
+import com.hodol.api.request.PostEdit;
 import com.hodol.api.request.PostSearch;
 import com.hodol.api.response.PostResponse;
 import com.hodol.api.service.PostService;
@@ -31,5 +32,10 @@ public class PostController {
     @GetMapping("/posts")
     public List<PostResponse> getAll(@ModelAttribute PostSearch postSearch) {
         return postService.getList(postSearch);
+    }
+
+    @PatchMapping("/posts/{postId}")
+    public PostResponse edit(@PathVariable Long postId, @RequestBody @Valid PostEdit request) {
+        return postService.edit(postId, request);
     }
 }

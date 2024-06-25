@@ -3,6 +3,7 @@ package com.hodol.api.service;
 import com.hodol.api.domain.Post;
 import com.hodol.api.repository.PostRepository;
 import com.hodol.api.request.PostCreate;
+import com.hodol.api.request.PostEdit;
 import com.hodol.api.request.PostSearch;
 import com.hodol.api.response.PostResponse;
 import org.junit.jupiter.api.Assertions;
@@ -91,5 +92,55 @@ class PostServiceTest {
         // then
         Assertions.assertEquals(10L, posts.size());
         Assertions.assertEquals("foo19", posts.get(0).getTitle());
+    }
+
+    @Test
+    @DisplayName("글 제목 수정")
+    void test4() {
+        // given
+        Post post = Post.builder()
+                .title("foo")
+                .content("bar")
+                .build();
+
+        postRepository.save(post);
+
+        PostEdit postEdit = PostEdit.builder()
+                .title("FOO")
+                .content("bar")
+                .build();
+
+        // when
+        postService.edit(post.getId(), postEdit);
+
+        // then
+        Post changedPost = postRepository.findById(post.getId())
+                .orElseThrow(() -> new RuntimeException("글이 존재 하지 않습니다. id=" + post.getId()));
+        Assertions.assertEquals("FOO", changedPost.getTitle());
+    }
+
+    @Test
+    @DisplayName("글 내용 수정")
+    void test5() {
+        // given
+        Post post = Post.builder()
+                .title("foo")
+                .content("bar")
+                .build();
+
+        postRepository.save(post);
+
+        PostEdit postEdit = PostEdit.builder()
+                .title("foo")
+                .content("BAR")
+                .build();
+
+        // when
+        postService.edit(post.getId(), postEdit);
+
+        // then
+        Post changedPost = postRepository.findById(post.getId())
+                .orElseThrow(() -> new RuntimeException("글이 존재 하지 않습니다. id=" + post.getId()));
+        Assertions.assertEquals("BAR", changedPost.getContent());
     }
 }
